@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Flight Ticket Generator</title>
+    <style>
+        :root {
+            --primary-color: #003366;
+            --secondary-color: #0055b8;
+            --accent-color: #e81932;
+            --light-grey: #f8f9fa;
+            --mid-grey: #e9ecef;
+            --dark-grey: #495057;
+            --border-color: #dee2e6;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            background-color: white;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .tagline {
+            color: var(--dark-grey);
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .note {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #856404;
+            font-size: 14px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-section {
+            background-color: var(--light-grey);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .form-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 18px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--dark-grey);
+            font-size: 14px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(0,85,184,0.1);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Ticket Styles */
+        #ticketContainer {
+            display: none;
+        }
+        
+        .ticket {
+            background-color: white;
+            border: 1px solid var(--border-color);
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: var(--light-grey);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .airline-logo {
+            max-height: 40px;
+            max-width: 150px;
+        }
+        
+        .ticket-title {
+            margin-left: 10px;
+        }
+        
+        .ticket-label {
+            display: inline-block;
+            background-color: #e6f7ff;
+            color: #0070f3;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .booking-info {
+            text-align: right;
+            font-size: 14px;
+            color: var(--dark-grey);
+        }
+        
+        .booking-ref {
+            font-weight: bold;
+            color: #000;
+        }
+        
+        .passenger-section {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .passenger-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .passenger-info h4 {
+            font-size: 12px;
+            color: var(--dark-grey);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        
+        .passenger-info p {
+            font-weight: bold;
+            font-size: 15px;
+        }
+        
+        .flight-section {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .flight-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .flight-date {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-grey);
+        }
+        
+        .flight-badge {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .flight-details {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .flight-number {
+            width: 100px;
+            text-align: center;
+            padding-right: 15px;
+        }
+        
+        .flight-number p {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .flight-number .operated-by {
+            font-size: 12px;
+            color: var(--dark-grey);
+        }
+        
+        .airport {
+            text-align: center;
+            width: 150px;
+        }
+        
+        .time {
+            font-size: 22px;
+            font-weight: bold;
+        }
+        
+        .airport-code {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        
+        .airport-name {
+            font-size: 14px;
+        }
+        
+        .terminal {
+            font-size: 12px;
+            color: var(--dark-grey);
+            margin-top: 5px;
+        }
+        
+        .flight-path {
+            flex-grow: 1;
+            position: relative;
+            height: 2px;
+            background-color: var(--border-color);
+            margin: 0 15px;
+        }
+        
+        .flight-path:after {
+            content: "";
+            position: absolute;
+            right: -5px;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 5px solid var(--border-color);
+        }
+        
+        .flight-path .duration {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #f8f9fa;
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+        
+        .flight-info-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            text-align: center;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: var(--dark-grey);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        
+        .info-value {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .barcode-section {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--light-grey);
+        }
+        
+        .barcode {
+            height: 60px;
+            background-color: white;
+            padding: 10px;
+            margin: 0 auto 10px;
+            max-width: 350px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .barcode-number {
+            font-family: monospace;
+            font-size: 14px;
+            letter-spacing: 2px;
+        }
+        
+        .ticket-footer {
+            padding: 15px 20px;
+            font-size: 12px;
+            color: var(--dark-grey);
+            text-align: center;
+            background-color: var(--light-grey);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .ticket-notices {
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        
+        .print-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        @media print {
+            body {
+                background-color: white;
+            }
+            
+            .container {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+                max-width: 100%;
+            }
+            
+            .print-buttons, .note {
+                display: none;
+            }
+        }
+        
+        /* Airline Brand Colors */
+        .airline-brand {
+            display: inline-flex;
+            align-items: center;
+            font-weight: bold;
+            font-size: 24px;
+        }
+        
+        .airline-brand.Emirates {
+            color: #D71921;
+        }
+        
+        .airline-brand.BritishAirways {
+            color: #075AAA;
+        }
+        
+        .airline-brand.TurkishAirlines {
+            color: #C70A0C;
+        }
+        
+        .airline-brand.Lufthansa {
+            color: #05164D;
+        }
+        
+        .airline-brand.QatarAirways {
+            color: #5C0632;
+        }
+        
+        .airline-brand.AirFrance {
+            color: #002157;
+        }
+        
+        .airline-brand.KLM {
+            color: #00A1DE;
+        }
+        
+        .airline-brand.SingaporeAirlines {
+            color: #0756A4;
+        }
+        
+        .airline-brand.DeltaAirLines {
+            color: #E01933;
+        }
+        
+        .airline-brand.AmericanAirlines {
+            color: #0078D2;
+        }
+        
+        .airline-brand.UnitedAirlines {
+            color: #002244;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="formContainer">
+        <header>
+            <h1>Flight Ticket Generator</h1>
+            <p class="tagline">Create professional flight tickets for visa application purposes</p>
+        </header>
+        
+        <div class="note">
+            <strong>Note:</strong> This tool generates flight reservations for visa application purposes only. These are not valid for travel.
+        </div>
+        
+        <form id="ticketForm">
+            <div class="form-grid">
+                <div class="form-section">
+                    <h2>Passenger Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="passengerName">Full Name (as in passport)</label>
+                        <input type="text" id="passengerName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="passport">Passport Number</label>
+                        <input type="text" id="passport" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nationality">Nationality</label>
+                        <input type="text" id="nationality" value="United States">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="Optional">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" placeholder="Optional">
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h2>Flight Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="airline">Airline</label>
+                        <select id="airline">
+                            <option value="Emirates">Emirates</option>
+                            <option value="British Airways">British Airways</option>
+                            <option value="Turkish Airlines">Turkish Airlines</option>
+                            <option value="Lufthansa">Lufthansa</option>
+                            <option value="Qatar Airways">Qatar Airways</option>
+                            <option value="Air France">Air France</option>
+                            <option value="KLM">KLM Royal Dutch Airlines</option>
+                            <option value="Singapore Airlines">Singapore Airlines</option>
+                            <option value="Delta Air Lines">Delta Air Lines</option>
+                            <option value="American Airlines">American Airlines</option>
+                            <option value="United Airlines">United Airlines</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="flightNumber">Flight Number</label>
+                        <input type="text" id="flightNumber" value="EK507" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="departureCity">From City</label>
+                            <input type="text" id="departureCity" value="New York" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="departureCode">Airport Code</label>
+                            <input type="text" id="departureCode" value="JFK" required maxlength="3">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="arrivalCity">To City</label>
+                            <input type="text" id="arrivalCity" value="Dubai" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="arrivalCode">Airport Code</label>
+                            <input type="text" id="arrivalCode" value="DXB" required maxlength="3">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="departureDate">Departure Date</label>
+                            <input type="date" id="departureDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="departureTime">Departure Time</label>
+                            <input type="time" id="departureTime" value="21:30" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="returnDate">Return Date</label>
+                            <input type="date" id="returnDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="returnTime">Return Time</label>
+                            <input type="time" id="returnTime" value="10:30" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="class">Travel Class</label>
+                        <select id="class">
+                            <option value="Economy">Economy</option>
+                            <option value="Premium Economy">Premium Economy</option>
+                            <option value="Business">Business</option>
+                            <option value="First">First</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2>Ticket Details</h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="bookingReference">Booking Reference</label>
+                        <input type="text" id="bookingReference" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ticketNumber">Ticket Number</label>
+                        <input type="text" id="ticketNumber" readonly>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button type="button" id="generateReference" class="btn btn-secondary">Generate Booking Reference</button>
+                <button type="submit" class="btn btn-primary">Generate Ticket</button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="container" id="ticketContainer">
+        <div class="print-buttons">
+            <button id="backButton" class="btn btn-secondary">Back to Form</button>
+            <button id="printButton" class="btn btn-primary">Print / Save as PDF</button>
+        </div>
+        
+        <div class="ticket" id="ticketContent">
+            <!-- Ticket will be generated here -->
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set minimum date to today
+            const today = new Date();
+            const todayString = today.toISOString().split('T')[0];
+            
+            document.getElementById('departureDate').min = todayString;
+            document.getElementById('returnDate').min = todayString;
+            
+            // Default values for dates (departure in 3 days, return in 10 days)
+            const departureDateDefault = new Date();
+            departureDateDefault.setDate(today.getDate() + 3);
+            
+            const returnDateDefault = new Date();
+            returnDateDefault.setDate(today.getDate() + 10);
+            
+            document.getElementById('departureDate').value = departureDateDefault.toISOString().split('T')[0];
+            document.getElementById('returnDate').value = returnDateDefault.toISOString().split('T')[0];
+            
+            // Airline codes mapping
+            const airlineCodes = {
+                'Emirates': 'EK',
+                'British Airways': 'BA',
+                'Turkish Airlines': 'TK',
+                'Lufthansa': 'LH',
+                'Qatar Airways': 'QR',
+                'Air France': 'AF',
+                'KLM Royal Dutch Airlines': 'KL',
+                'Singapore Airlines': 'SQ',
+                'Delta Air Lines': 'DL',
+                'American Airlines': 'AA',
+                'United Airlines': 'UA'
+            };
+
+            // Generate random alphanumeric string
+            function generateRandomString(length, type = 'alphanumeric') {
+                const chars = type === 'numeric' 
+                    ? '0123456789' 
+                    : type === 'alpha' 
+                        ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                        : 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                
+                let result = '';
+                for (let i = 0; i < length; i++) {
+                    result += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return result;
+            }
+            
+            // Format date for display
+            function formatDate(dateString, includeDay = true) {
+                const date = new Date(dateString);
+                const options = includeDay 
+                    ? { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }
+                    : { day: '2-digit', month: 'short', year: 'numeric' };
+                
+                return date.toLocaleDateString('en-US', options);
+            }
+            
+            // Format time with AM/PM
+            function formatTime(timeString) {
+                if (!timeString) return '';
+                
+                const [hours, minutes] = timeString.split(':');
+                const hour = parseInt(hours);
+                const ampm = hour >= 12 ? 'PM' : 'AM';
+                const hour12 = hour % 12 || 12;
+                
+                return `${hour12}:${minutes} ${ampm}`;
+            }
+            
+            // Calculate flight duration
+            function calculateFlightDuration(departure, arrival) {
+                // For demonstration, using a random duration between 6 and 10 hours
+                const hours = Math.floor(Math.random() * 5) + 6;
+                const minutes = [0, 15, 30, 45][Math.floor(Math.random() * 4)];
+                
+                return {
+                    hours,
+                    minutes,
+                    display: `${hours}h ${minutes > 0 ? minutes + 'm' : ''}`
+                };
+            }
+            
+            // Calculate arrival time based on departure time and duration
+            function calculateArrivalTime(departureTime, duration) {
+                const [dHours, dMinutes] = departureTime.split(':').map(Number);
+                
+                let totalMinutes = (dHours * 60 + dMinutes) + (duration.hours * 60 + duration.minutes);
+                let aHours = Math.floor(totalMinutes / 60) % 24;
+                let aMinutes = totalMinutes % 60;
+                
+                return {
+                    time: `${aHours.toString().padStart(2, '0')}:${aMinutes.toString().padStart(2, '0')}`,
+                    display: formatTime(`${aHours.toString().padStart(2, '0')}:${aMinutes.toString().padStart(2, '0')}`)
+                };
+            }
+            
+            // Generate realistic ticket number based on airline code
+            function generateTicketNumber(airline) {
+                const code = airlineCodes[airline] || 'XX';
+                // Format: airline code (2 chars) + 10 digits
+                return `${code}${generateRandomString(10, 'numeric')}`;
+            }
+            
+            // Generate boarding pass barcode pattern
+            function generateBarcodeHTML() {
+                // Simulate a realistic barcode pattern
+                let pattern = '';
+                const bars = 70; // Number of bars
+                
+                for (let i = 0; i < bars; i++) {
+                    const width = Math.random() > 0.7 ? Math.random() * 3 + 1 : 1; // Some thick, some thin
+                    const height = 100; // Full height
+                    const marginRight = Math.random() * 2; // Space between bars
+                    
+                    pattern += `<div style="height: ${height}%; width: ${width}px; background-color: #000; display: inline-block; margin-right: ${marginRight}px;"></div>`;
+                }
+                
+                return pattern;
+            }
+            
+            // Create airline brand HTML
+            function getAirlineBrandHTML(airline) {
+                // Remove spaces and special characters for class name
+                const className = airline.replace(/\s+/g, '');
+                return `<div class="airline-brand ${className}">${airline}</div>`;
+            }
+            
+            // Generate booking reference button
+            document.getElementById('generateReference').addEventListener('click', function() {
+                const bookingRef = generateRandomString(6, 'alphanumeric').toUpperCase();
+                document.getElementById('bookingReference').value = bookingRef;
+                
+                const airline = document.getElementById('airline').value;
+                const ticketNumber = generateTicketNumber(airline);
+                document.getElementById('ticketNumber').value = ticketNumber;
+            });
+            
+            // Form submission
+            document.getElementById('ticketForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Generate booking reference and ticket number if not already generated
+                if (!document.getElementById('bookingReference').value) {
+                    const bookingRef = generateRandomString(6, 'alphanumeric').toUpperCase();
+                    document.getElementById('bookingReference').value = bookingRef;
+                }
+                
+                if (!document.getElementById('ticketNumber').value) {
+                    const airline = document.getElementById('airline').value;
+                    const ticketNumber = generateTicketNumber(airline);
+                    document.getElementById('ticketNumber').value = ticketNumber;
+                }
+                
+                generateTicket();
+                
+                // Show ticket container, hide form
+                document.getElementById('formContainer').style.display = 'none';
+                document.getElementById('ticketContainer').style.display = 'block';
+            });
+            
+            // Back button
+            document.getElementById('backButton').addEventListener('click', function() {
+                document.getElementById('formContainer').style.display = 'block';
+                document.getElementById('ticketContainer').style.display = 'none';
+            });
+            
+            // Print button
+            document.getElementById('printButton').addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Generate ticket HTML
+            function generateTicket() {
+                // Get all form values
+                const passengerName = document.getElementById('passengerName').value.toUpperCase();
+                const passport = document.getElementById('passport').value.toUpperCase();
+                const nationality = document.getElementById('nationality').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                
+                const airline = document.getElementById('airline').value;
+                const flightNumber = document.getElementById('flightNumber').value;
+                const departureCity = document.getElementById('departureCity').value;
+                const departureCode = document.getElementById('departureCode').value.toUpperCase();
+                const arrivalCity = document.getElementById('arrivalCity').value;
+                const arrivalCode = document.getElementById('arrivalCode').value.toUpperCase();
+                const departureDate = document.getElementById('departureDate').value;
+                const departureTime = document.getElementById('departureTime').value;
+                const returnDate = document.getElementById('returnDate').value;
+                const returnTime = document.getElementById('returnTime').value;
+                const travelClass = document.getElementById('class').value;
+                
+                const bookingReference = document.getElementById('bookingReference').value;
+                const ticketNumber = document.getElementById('ticketNumber').value;
+                
+                // Calculate additional values
+                const airlineCode = airlineCodes[airline] || flightNumber.split(/[0-9]/)[0];
+                const departureFlightDuration = calculateFlightDuration(departureDate, returnDate);
+                const departureArrivalTime = calculateArrivalTime(departureTime, departureFlightDuration);
+                
+                const returnFlightDuration = calculateFlightDuration(returnDate, departureDate);
+                const returnArrivalTime = calculateArrivalTime(returnTime, returnFlightDuration);
+                
+                // Generate seat numbers
+                const departureSeat = `${Math.floor(Math.random() * 30) + 1}${String.fromCharCode(65 + Math.floor(Math.random() * 6))}`;
+                const returnSeat = `${Math.floor(Math.random() * 30) + 1}${String.fromCharCode(65 + Math.floor(Math.random() * 6))}`;
+                
+                // Terminal numbers
+                const departureTerminal = Math.floor(Math.random() * 4) + 1;
+                const arrivalTerminal = Math.floor(Math.random() * 4) + 1;
+                
+                // Gate numbers
+                const departureGate = `${String.fromCharCode(65 + Math.floor(Math.random() * 8))}${Math.floor(Math.random() * 20) + 1}`;
+                const returnGate = `${String.fromCharCode(65 + Math.floor(Math.random() * 8))}${Math.floor(Math.random() * 20) + 1}`;
+                
+                // Current date for ticket issue date
+                const issueDate = formatDate(new Date().toISOString().split('T')[0], false);
+                
+                // Baggage allowance based on class
+                let baggageAllowance = '23KG';
+                switch(travelClass) {
+                    case 'Economy':
+                        baggageAllowance = '23KG';
+                        break;
+                    case 'Premium Economy':
+                        baggageAllowance = '30KG';
+                        break;
+                    case 'Business':
+                        baggageAllowance = '40KG';
+                        break;
+                    case 'First':
+                        baggageAllowance = '50KG';
+                        break;
+                }
+                
+                // Return flight number (usually incremented by 1)
+                const flightNumDigits = flightNumber.replace(/\D/g, '');
+                const returnFlightNumber = `${airlineCode}${parseInt(flightNumDigits) + 1}`;
+                
+                // Generate the ticket HTML
+                const ticketHtml = `
+                    <div class="ticket-header">
+                        <div style="display: flex; align-items: center;">
+                            ${getAirlineBrandHTML(airline)}
+                            <div class="ticket-title">
+                                <span class="ticket-label">E-TICKET</span>
+                            </div>
+                        </div>
+                        <div class="booking-info">
+                            <div>Booking Reference: <span class="booking-ref">${bookingReference}</span></div>
+                            <div>Issue Date: ${issueDate}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="passenger-section">
+                        <h3 class="section-title">Passenger Information</h3>
+                        <div class="passenger-grid">
+                            <div class="passenger-info">
+                                <h4>Passenger Name</h4>
+                                <p>${passengerName}</p>
+                            </div>
+                            <div class="passenger-info">
+                                <h4>Passport Number</h4>
+                                <p>${passport}</p>
+                            </div>
+                            <div class="passenger-info">
+                                <h4>Ticket Number</h4>
+                                <p>${ticketNumber}</p>
+                            </div>
+                            <div class="passenger-info">
+                                <h4>Nationality</h4>
+                                <p>${nationality}</p>
+                            </div>
+                            ${email ? `
+                            <div class="passenger-info">
+                                <h4>Email</h4>
+                                <p>${email}</p>
+                            </div>` : ''}
+                            ${phone ? `
+                            <div class="passenger-info">
+                                <h4>Phone</h4>
+                                <p>${phone}</p>
+                            </div>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="flight-section">
+                        <div class="flight-title">
+                            <span class="flight-badge">OUTBOUND</span>
+                            <span class="flight-date">${formatDate(departureDate)}</span>
+                        </div>
+                        
+                        <div class="flight-details">
+                            <div class="flight-number">
+                                <div class="info-label">FLIGHT</div>
+                                <p>${airlineCode} ${flightNumber.replace(/\D/g, '')}</p>
+                                <div class="operated-by">Operated by ${airline}</div>
+                            </div>
+                            
+                            <div class="airport">
+                                <div class="time">${formatTime(departureTime)}</div>
+                                <div class="airport-code">${departureCode}</div>
+                                <div class="airport-name">${departureCity}</div>
+                                <div class="terminal">Terminal ${departureTerminal}, Gate ${departureGate}</div>
+                            </div>
+                            
+                            <div class="flight-path">
+                                <div class="duration">
+                                    <i style="margin-right: 5px;">&#9992;</i> ${departureFlightDuration.display}
+                                </div>
+                            </div>
+                            
+                            <div class="airport">
+                                <div class="time">${departureArrivalTime.display}</div>
+                                <div class="airport-code">${arrivalCode}</div>
+                                <div class="airport-name">${arrivalCity}</div>
+                                <div class="terminal">Terminal ${arrivalTerminal}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flight-info-grid">
+                            <div>
+                                <div class="info-label">Class</div>
+                                <div class="info-value">${travelClass}</div>
+                            </div>
+                            <div>
+                                <div class="info-label">Baggage</div>
+                                <div class="info-value">${baggageAllowance}</div>
+                            </div>
+                            <div>
+                                <div class="info-label">Seat</div>
+                                <div class="info-value">${departureSeat}</div>
+                            </div>
+                            <div>
+                                <div class="info-label">Meal</div>
+                                <div class="info-value">Included</div>
+                            </div>
+                            <div>
+                                <div class="info-label">Status</div>
+                                <div class="info-value">Confirmed</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flight-section">
+                        <div class="flight-title">
+                            <span class="flight-badge">RETURN</span>
+                            <span class="flight-date">${formatDate(returnDate)}</span>
+                        </div>
+                        
+                        <div class="flight-details">
+                            <div class="flight-number">
+                                <div class="info-label">FLIGHT</div>
+                                <p>${returnFlightNumber}</p>
+                                <div class="operated-by">Operated by ${airline}</div>
+                            </div>
+                            
+                            <div class="airport">
+                                <div class="time">${formatTime(returnTime)}</div>
+                                <div class="airport-code">${arrivalCode}</div>
+                                <div class="airport-name">${arrivalCity}</div>
+                                <div class="terminal">Terminal ${arrivalTerminal}, Gate ${returnGate}</div>
+                            </div>
+                            
+                            <div class="flight-path">
+                                <div class="duration">
+                                    <i style="margin-right: 5px;">&#9992;</i> ${returnFlightDuration.display}
+                                </div>
+                            </div>
+                            
+                            <div class="airport">
+                                <div class="time">${returnArrivalTime.display}</div>
+                                <div class="airport-code">${departureCode}</div>
+                                <div class="airport-name">${departureCity}</div>
+                                <div class="terminal">Terminal ${departureTerminal}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flight-info-grid">
+                            <div>
+                                <div class="info-label">Class</div>
+                                <div class="info-value">${travelClass}</div>
+                            </div>
+                            <div>
+                                <div class="info-label">Baggage</div>
+                                <div class="info-value">${baggageAllowance}</div>
+                            </div>
+                            <div>
+                                <div class="info-label">Seat</div>
+                                <div class="info-value">${returnSeat}</div>
+                            </div>
+                            <div>
+                                <div class="info-label">Meal</div>
+                                <div class="info-value">Included</div>
+                            </div>
+                            <div>
+                                <div class="info-label">Status</div>
+                                <div class="info-value">Confirmed</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="barcode-section">
+                        <div class="barcode" style="display: inline-flex; align-items: center; height: 60px; overflow: hidden;">
+                            ${generateBarcodeHTML()}
+                        </div>
+                        <div class="barcode-number">${ticketNumber}</div>
+                    </div>
+                    
+                    <div class="ticket-footer">
+                        <div>
+                            <div>${airline} • Booking Reference: ${bookingReference}</div>
+                            <div>Customer Service: +${Math.floor(Math.random() * 900) + 100} ${Math.floor(Math.random() * 900) + 100} ${Math.floor(Math.random() * 10000) + 1000}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-weight: bold;">${airline}</div>
+                        </div>
+                    </div>
+                `;
+                
+                // Set the ticket HTML
+                document.getElementById('ticketContent').innerHTML = ticketHtml;
+            }
+        });
+    </script>
+</body>
+</html>
